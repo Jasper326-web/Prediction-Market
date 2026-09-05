@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>预测市场 · 深度分析与机会挖掘</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 顶部栏 -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◆</span>
+      <span class="brand-name">预测市场</span>
+      <span class="brand-sub">深度研判 · 机会挖掘</span>
+    </div>
+    <button id="settingsBtn" class="icon-btn" title="设置">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <span class="icon-label">设置</span>
+    </button>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <h1>从关键词到市场研判</h1>
+      <p>输入事件关键词，勾选关注市场，AI 跨资产深度分析传导路径与潜在机会</p>
+    </section>
+
+    <!-- 输入卡 -->
+    <section class="card input-card">
+      <!-- 关键词 -->
+      <div class="field">
+        <label for="keyword">
+          <span class="req">*</span> 关键词
+        </label>
+        <input id="keyword" type="text" placeholder="如：厄尔尼诺、美联储降息、稀土出口管制、极端高温" autocomplete="off">
+      </div>
+
+      <!-- 关注市场 -->
+      <div class="field">
+        <label>关注市场 <span class="muted">（可多选）</span></label>
+        <div class="checkbox-grid" id="marketOptions">
+          <label class="check"><input type="checkbox" value="期货市场"><span>期货市场</span></label>
+          <label class="check"><input type="checkbox" value="股票市场"><span>股票市场</span></label>
+          <label class="check"><input type="checkbox" value="楼市/房地产"><span>楼市/房地产</span></label>
+          <label class="check"><input type="checkbox" value="债券市场"><span>债券市场</span></label>
+          <label class="check"><input type="checkbox" value="外汇市场"><span>外汇市场</span></label>
+          <label class="check"><input type="checkbox" value="大宗商品"><span>大宗商品</span></label>
+          <label class="check"><input type="checkbox" value="能源市场"><span>能源市场</span></label>
+          <label class="check"><input type="checkbox" value="农产品"><span>农产品</span></label>
+          <label class="check"><input type="checkbox" value="金属/矿产"><span>金属/矿产</span></label>
+          <label class="check"><input type="checkbox" value="加密货币"><span>加密货币</span></label>
+          <label class="check"><input type="checkbox" value="消费/零售"><span>消费/零售</span></label>
+          <label class="check"><input type="checkbox" value="航运物流"><span>航运物流</span></label>
+        </div>
+        <input id="otherMarket" type="text" class="other-input" placeholder="其他市场（可选，如：航运、化肥、电力）" autocomplete="off">
+      </div>
+
+      <!-- 补充说明 -->
+      <div class="field">
+        <label for="supplement">补充说明 <span class="muted">（可选）</span></label>
+        <textarea id="supplement" rows="3" placeholder="如：厄尔尼诺对石油、农产品价格的影响；重点关注亚太市场；时间窗口 3-6 个月"></textarea>
+      </div>
+
+      <!-- 附件 -->
+      <div class="field">
+        <label>附件资料 <span class="muted">（可选 · 支持文字与音频）</span></label>
+        <div class="dropzone" id="dropzone" tabindex="0">
+          <input type="file" id="fileInput" multiple accept=".txt,.md,.markdown,.csv,.json,.log,.text,.mp3,.wav,.m4a,.ogg,.webm,.flac">
+          <svg class="drop-icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <p class="drop-text">点击或拖拽文件到此处上传</p>
+          <p class="drop-hint">文字：.txt .md .csv .json &nbsp;|&nbsp; 音频：.mp3 .wav .m4a</p>
+        </div>
+        <div class="file-list" id="fileList"></div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="actions">
+        <button id="predictBtn" class="btn btn-predict">
+          <span class="btn-icon">📊</span> 市场预测
+        </button>
+        <button id="opportunityBtn" class="btn btn-opportunity">
+          <span class="btn-icon">💰</span> 机会挖掘
+        </button>
+      </div>
+      <p class="action-hint" id="actionHint">市场预测侧重传导关系与方向研判；机会挖掘侧重可操作的赚钱机会</p>
+    </section>
+
+    <!-- 结果区 -->
+    <section class="card results" id="results" hidden>
+      <div class="results-head">
+        <div class="results-title">
+          <span id="resultType" class="result-tag">市场预测</span>
+          <span id="resultQuery" class="result-query"></span>
+        </div>
+        <div class="results-meta">
+          <span id="resultModel" class="chip"></span>
+          <button id="copyBtn" class="ghost-btn" title="复制">复制</button>
+          <button id="closeResults" class="ghost-btn" title="关闭">✕</button>
+        </div>
+      </div>
+      <div id="resultBody" class="results-body"></div>
+    </section>
+  </main>
+
+  <!-- 设置弹窗 -->
+  <div class="modal" id="settingsModal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2>设置</h2>
+        <button class="ghost-btn" data-close>✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label for="apiKey">OpenRouter API Key</label>
+          <input id="apiKey" type="password" placeholder="sk-or-v1-xxxxxxxxxxxx" autocomplete="off">
+          <p class="field-hint">获取地址：<a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>。Key 仅保存在本机浏览器 localStorage。</p>
+        </div>
+        <div class="field">
+          <label for="modelSelect">模型</label>
+          <select id="modelSelect"></select>
+          <p class="field-hint">市场分析推荐 Claude / GPT-5 / Gemini 2.5 Pro 等顶尖模型；音频输入需选支持多模态的模型。</p>
+        </div>
+        <div class="field">
+          <label for="temperature">温度 <span id="tempVal" class="muted">0.3</span></label>
+          <input id="temperature" type="range" min="0" max="1" step="0.1" value="0.3">
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-predict" id="saveSettings">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
