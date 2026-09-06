@@ -17,22 +17,22 @@
     ? "/api/chat"
     : "https://openrouter.ai/api/v1/chat/completions";
 
-  // 可选模型（OpenRouter 上顶尖模型，按能力分组）
+  // 可选模型（已验证中国大陆 OpenRouter 可用）
   const MODELS = [
-    { id: "anthropic/claude-opus-4.1",            name: "Claude Opus 4.1 · 顶尖推理" },
-    { id: "anthropic/claude-sonnet-4.5",           name: "Claude Sonnet 4.5 · 综合强" },
-    { id: "openai/gpt-5",                          name: "GPT-5 · OpenAI 旗舰" },
-    { id: "openai/gpt-4o",                         name: "GPT-4o · 多模态(支持音频)" },
-    { id: "google/gemini-2.5-pro",                 name: "Gemini 2.5 Pro · 长上下文多模态" },
-    { id: "google/gemini-2.5-flash",               name: "Gemini 2.5 Flash · 快速" },
-    { id: "x-ai/grok-4",                           name: "Grok-4 · xAI" },
+    { id: "qwen/qwen3.8-max-0902",                 name: "Qwen3.8 Max · 综合最强" },
     { id: "deepseek/deepseek-r1",                  name: "DeepSeek R1 · 深度推理" },
-    { id: "qwen/qwen3-235b-a22b",                  name: "Qwen3 235B · 通义" },
-    { id: "meta-llama/llama-4-maverick",           name: "Llama 4 Maverick" },
+    { id: "deepseek/deepseek-v4-pro-0813",         name: "DeepSeek V4 Pro · 主力推荐" },
+    { id: "qwen/qwen3-235b-a22b",                  name: "Qwen3 235B · 通义大模型" },
+    { id: "deepseek/deepseek-v4-flash",            name: "DeepSeek V4 Flash · 快速" },
+    { id: "qwen/qwen3.8-flash",                    name: "Qwen3.8 Flash · 快速轻量" },
+    { id: "z-ai/glm-5.3",                          name: "GLM-5.3 · 智谱" },
+    { id: "z-ai/glm-5.3-flash",                    name: "GLM-5.3 Flash · 快速" },
+    { id: "bytedance-seed/seed-2-1-turbo",         name: "Seed 2.1 Turbo · 字节跳动" },
+    { id: "meta-llama/llama-4-maverick",           name: "Llama 4 Maverick · Meta" },
   ];
 
   // 默认模型
-  const DEFAULT_MODEL = "anthropic/claude-opus-4.1";
+  const DEFAULT_MODEL = "qwen/qwen3.8-max-0902";
 
   // 系统提示词
   const SYS_PREDICT = `你是一位顶尖的宏观经济与跨资产市场分析专家，精通大宗商品、股票、房地产、固收、外汇等多市场的传导逻辑。
@@ -117,6 +117,12 @@
 
     // 回填设置
     els.apiKey.value = state.apiKey;
+    // 校验已保存的模型是否还可用（可能被地理封锁或废弃），不可用则自动切换默认
+    const validIds = MODELS.map((m) => m.id);
+    if (!validIds.includes(state.model)) {
+      state.model = DEFAULT_MODEL;
+      localStorage.setItem("pm_model", DEFAULT_MODEL);
+    }
     els.modelSelect.value = state.model;
     els.temperature.value = state.temperature;
     els.tempVal.textContent = state.temperature;
