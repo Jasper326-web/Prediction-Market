@@ -10,7 +10,12 @@
 
   /* ---------- 1. 常量与配置 ---------- */
 
-  const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+  // 部署到 Vercel 时用 /api/chat 代理（从美国节点转发，绕开国内网络限制）
+  // 本地开发或其他环境直接请求 OpenRouter
+  const USE_PROXY = /vercel\.app$|localhost/.test(location.hostname);
+  const API_URL = USE_PROXY
+    ? "/api/chat"
+    : "https://openrouter.ai/api/v1/chat/completions";
 
   // 可选模型（OpenRouter 上顶尖模型，按能力分组）
   const MODELS = [
@@ -318,14 +323,19 @@
     };
 
     try {
-      const res = await fetch(OPENROUTER_URL, {
+      const headers = { "Content-Type": "application/json" };
+      // 直连 OpenRouter 时用 Authorization header
+      if (!USE_PROXY) {
+        headers.Authorization = `Bearer ${state.apiKey}`;
+        headers["HTTP-Referer"] = window.location.origin || "https://localhost";
+        headers["X-Title"] = "Prediction Market";
+      }
+      // 走代理时把 apiKey 放到 body，由服务端转发
+      if (USE_PROXY) body.apiKey = state.apiKey;
+
+      const res = await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.apiKey}`,
-          "HTTP-Referer": window.location.origin || "https://localhost",
-          "X-Title": "Prediction Market",
-        },
+        headers,
         body: JSON.stringify(body),
       });
 
