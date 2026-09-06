@@ -322,6 +322,7 @@
     const body = {
       model: state.model,
       temperature: state.temperature,
+      stream: true,
       messages: [
         { role: "system", content: systemPrompt },
         userMessage,
@@ -355,14 +356,13 @@
         throw new Error(msg);
       }
 
-      const json = await res.json();
-      const answer = json.choices?.[0]?.message?.content || "（模型未返回内容）";
-      showResult(mode, data, answer);
+      // 流式渲染
+      await streamResponse(res, mode, data);
     } catch (err) {
       const msg = String(err && err.message || err);
       let hint = "";
       if (/audio|multimodal|input_audio|not support/i.test(msg)) {
-        hint = "\n\n提示：当前模型可能不支持音频输入，请切换到 GPT-4o / Gemini 2.5 Pro 等多模态模型，或将音频转写为文字后上传。";
+        hint = "\n\n提示：当前模型可能不支持音频输入，请切换到其他模型，或将音频转写为文字后上传。";
       } else if (/401|unauthor|api key|no auth/i.test(msg)) {
         hint = "\n\n提示：API Key 无效或未授权，请检查设置。";
       }
@@ -387,6 +387,74 @@
           <div class="spinner"></div>
           <div class="loading-text">正在调用 ${state.model} 进行深度${mode === "predict" ? "预测" : "挖掘"}，请稍候…</div>
         </div>`;
+    }
+  }
+
+  // SSE 流式解析 + 实时渲染
+  async function streamResponse(res, mode, data) {
+    // 先展示结果区的 header（非 loading 态）
+    els.results.hidden = false;
+    els.resultType.textContent = mode === "predict" ? "市场预测" : "机会挖掘";
+    els.resultType.classList.toggle("opportunity", mode === "opportunity");
+    els.resultQuery.textContent = `关键词：${data.keyword}${data.markets.length ? " · " + data.markets.join("、") : ""}`;
+    els.resultModel.textContent = state.model;
+    els.resultBody.innerHTML = `<div class="md" id="streaming-body"></div>`;
+    const streamEl = els.resultBody.querySelector("#streaming-body");
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let fullText = "";
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE 格式: 每行 "data: {...}" 或 "data: [DONE]"，块之间用空行分隔
+        let idx;
+        while ((idx = buffer.indexOf("\n\n")) !== -1) {
+          const chunk = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+          const lines = chunk.split("\n");
+          for (const line of lines) {
+            if (!line.startsWith("data:")) continue;
+            const jsonStr = line.slice(5).trim();
+            if (!jsonStr || jsonStr === "[DONE]") continue;
+            try {
+              const json = JSON.parse(jsonStr);
+              const delta = json.choices?.[0]?.delta?.content;
+              if (delta) {
+                fullText += delta;
+                state.lastResult = fullText;
+                streamEl.innerHTML = renderMarkdown(fullText) + `<span class="cursor">▊</span>`;
+                // 自动滚动到底部
+                els.resultBody.scrollTop = els.resultBody.scrollHeight;
+              }
+            } catch { /* 忽略解析错误 */ }
+          }
+        }
+      }
+      // 清理：如果还有 buffer 尾部未处理
+      const tail = buffer.trim();
+      if (tail.startsWith("data:")) {
+        const jsonStr = tail.slice(5).trim();
+        if (jsonStr && jsonStr !== "[DONE]") {
+          try {
+            const json = JSON.parse(jsonStr);
+            const delta = json.choices?.[0]?.delta?.content;
+            if (delta) {
+              fullText += delta;
+              state.lastResult = fullText;
+            }
+          } catch { /* ignore */ }
+        }
+      }
+      // 最终渲染（去掉光标）
+      streamEl.innerHTML = renderMarkdown(fullText);
+    } catch (err) {
+      streamEl.innerHTML = renderMarkdown(fullText) + `<p style="color:var(--red)">⚠️ 流式中断：${err.message}</p>`;
     }
   }
 

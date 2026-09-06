@@ -242,6 +242,14 @@ select { appearance: none; cursor: pointer;
 .md hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 .md a { color: var(--blue); }
 
+/* ===== 流式光标 ===== */
+.md .cursor {
+  display: inline-block; width: 0; margin-left: 2px;
+  color: var(--blue); font-weight: 700;
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
 /* ===== 弹窗 ===== */
 .modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 20px; }
 .modal[hidden] { display: none; }

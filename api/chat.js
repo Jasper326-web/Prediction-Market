@@ -1,5 +1,5 @@
 // Vercel Serverless Function: POST /api/chat
-// 转发到 OpenRouter API，避免浏览器直连的网络问题
+// 转发到 OpenRouter API，支持流式和非流式两种模式
 export default async function handler(req, res) {
   // CORS 预检
   if (req.method === "OPTIONS") {
@@ -31,7 +31,8 @@ export default async function handler(req, res) {
     const forwarded = { ...body };
     delete forwarded.apiKey;
 
-    // 转发到 OpenRouter
+    const isStream = forwarded.stream === true;
+
     const openrouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -43,6 +44,39 @@ export default async function handler(req, res) {
       body: JSON.stringify(forwarded),
     });
 
+    // 处理错误（提前返回）
+    if (!openrouterRes.ok) {
+      const data = await openrouterRes.json().catch(() => ({}));
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      return res.status(openrouterRes.status).json(data.error || { error: "OpenRouter error" });
+    }
+
+    // 流式：直接 pipe SSE 响应
+    if (isStream && openrouterRes.body) {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+      res.setHeader("Cache-Control", "no-cache, no-transform");
+      res.setHeader("Connection", "keep-alive");
+      // 禁用 Vercel 的 buffer（关键！否则会缓冲整个响应再发送）
+      res.setHeader("X-Accel-Buffering", "no");
+
+      const reader = openrouterRes.body.getReader();
+      const writer = res;
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          writer.write(value);
+        }
+        writer.end();
+      } catch (pipeErr) {
+        try { writer.end(); } catch { /* ignore */ }
+      }
+      return;
+    }
+
+    // 非流式：等待完整 JSON
     const data = await openrouterRes.json();
     res.setHeader("Access-Control-Allow-Origin", "*");
     return res.status(openrouterRes.status).json(data);
