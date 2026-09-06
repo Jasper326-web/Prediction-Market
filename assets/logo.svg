@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1a2236"/>
+      <stop offset="1" stop-color="#0d1220"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="16" y1="8" x2="48" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD877"/>
+      <stop offset="0.5" stop-color="#F5B544"/>
+      <stop offset="1" stop-color="#C98A1E"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="24" y1="30" x2="44" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6BA3FF"/>
+      <stop offset="1" stop-color="#2F6BFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景圆角方形 -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="13.5" stroke="#2A3550" stroke-opacity="0.6"/>
+
+  <!-- 钻石/菱形外轮廓（呼应原 brand-mark ◆） -->
+  <path d="M32 6 L54 28 L32 58 L10 28 Z" stroke="url(#gold)" stroke-width="1.6" stroke-linejoin="round" fill="none" opacity="0.5"/>
+
+  <!-- 上升趋势线（市场增长） -->
+  <polyline points="16,42 24,36 32,40 40,26 48,20"
+            fill="none" stroke="url(#blue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 数据点 -->
+  <circle cx="16" cy="42" r="2" fill="#6BA3FF"/>
+  <circle cx="24" cy="36" r="2" fill="#6BA3FF"/>
+  <circle cx="32" cy="40" r="2" fill="#6BA3FF"/>
+  <circle cx="40" cy="26" r="2" fill="#F5B544"/>
+  <circle cx="48" cy="20" r="2.5" fill="#F5B544"/>
+
+  <!-- 预测点（问号/菱形小点） -->
+  <circle cx="52" cy="14" r="2.5" fill="url(#gold)"/>
+  <circle cx="52" cy="14" r="5" fill="url(#gold)" opacity="0.2"/>
+
+  <!-- 中心菱形装饰 -->
+  <path d="M32 18 L38 26 L32 34 L26 26 Z" fill="url(#gold)" opacity="0.9"/>
+</svg>

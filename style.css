@@ -48,7 +48,7 @@ a { color: var(--blue); }
   border-bottom: 1px solid var(--border);
 }
 .brand { display: flex; align-items: baseline; gap: 10px; }
-.brand-mark { color: var(--gold); font-size: 18px; }
+.brand-mark { width: 32px; height: 32px; border-radius: 7px; flex: none; }
 .brand-name { font-weight: 700; font-size: 17px; letter-spacing: .5px; }
 .brand-sub { color: var(--muted-2); font-size: 12px; }
 
